@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  is_divisible_by_3:
+    build:
+      context: .
+      dockerfile: DockerfileIsDivisibleBy3
+    restart: always
+
+
+  is_divisible_by_5:
+    build:
+      context: .
+      dockerfile: DockerfileIsDivisibleBy5
+    restart: always
+
+
+  is_divisible_by_35:
+    build:
+      context: .
+      dockerfile: DockerfileIsDivisibleBy35
+    restart: always
+    depends_on:
+      is_divisible_by_3:
+        condition: service_started
+      is_divisible_by_5:
+        condition: service_started
+    ports:
+      - "80:80"

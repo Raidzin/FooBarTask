@@ -47,4 +47,4 @@ def a(n):
     else:
         s = sediAD65()
         return s(n)
-A.run('0.0.0.0')
+A.run('0.0.0.0', port=80)
