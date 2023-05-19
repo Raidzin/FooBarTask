@@ -7,7 +7,6 @@ from time import time
 A = Flask(__name__)
 CONV = jsonify
 
-
 class sediAD65(object):
     __call__ = lambda n: False
     def __init__(self):
