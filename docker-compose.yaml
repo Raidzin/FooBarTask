@@ -25,5 +25,19 @@ services:
         condition: service_started
       is_divisible_by_5:
         condition: service_started
+
+
+  is_divisible_by_3535:
+    build:
+      context: .
+      dockerfile: DockerfileIsDivisibleBy3535
+    restart: always
+    depends_on:
+      is_divisible_by_3:
+        condition: service_started
+      is_divisible_by_5:
+        condition: service_started
+      is_divisible_by_35:
+        condition: service_started
     ports:
       - "80:80"

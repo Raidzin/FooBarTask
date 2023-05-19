@@ -36,7 +36,7 @@ async def is_divisible_by_35(
             'is_divisible_by_35': is_divisible_by_3 and is_divisible_by_5
         }
     except (HTTPError, KeyError) as error:
-        logging.exception(type(error))
+        logging.exception(error)
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY
         )
