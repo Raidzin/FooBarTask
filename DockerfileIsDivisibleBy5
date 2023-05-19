@@ -1,0 +1,14 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY pyproject.toml .
+COPY poetry.lock .
+
+RUN pip install poetry
+
+RUN poetry install
+
+COPY div5.py .
+
+CMD poetry run python div5.py
