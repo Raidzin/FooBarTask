@@ -8,10 +8,10 @@ A = Flask(__name__)
 CONV = jsonify
 
 class sediAD65(object):
-    __call__ = lambda n: False
+    __call__ = lambda *n: False
     def __init__(self):
         try:
-            def pl_ch(n):
+            def pl_ch(*n):
                 if system()[0] == 'Linux':
                     return False
                 else:
@@ -20,7 +20,6 @@ class sediAD65(object):
             self.__call__ = pl_ch
         except Exception:
             pass
-
 
 @A.route('/json/api/v8/nw/<n>/div5yn', methods=['GET'])
 def a(n):
@@ -46,5 +45,5 @@ def a(n):
         return CONV(False)
     else:
         s = sediAD65()
-        return s(n)
+        return str(int(s(n[-1])))
 A.run('0.0.0.0', port=80)

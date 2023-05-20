@@ -1,38 +1,72 @@
-from typing import Dict
+import logging
 
+from httpx import HTTPError, post
 from nicegui import ui
 
-tab_names = ['A', 'B', 'C']
 
-# necessary until we improve native support for tabs (https://github.com/zauberzeug/nicegui/issues/251)
+with ui.image('https://w.forfun.com/fetch/c6/c61a531f93b5cef71e45e8c01ab28435.jpeg').style('width: 100vw; height: 100vh; margin: auto;'):
+
+    with ui.page_sticky(position='top').classes(replace='w-full row items-center justify-start bg-dark opacity-40') as header:
+        ui.label('FooBar').classes(replace='text-h4 text-weight-bolder opacity-100')
+
+    with ui.footer(value=False).classes('justify-center bg-dark') as footer:
+        with ui.row().classes('w-full items-center'):
+            ui.label('made with')
+            ui.link('NiceGUI', 'https://nicegui.io').classes('text-white')
+            ui.label('by')
+            ui.link('Raidzin', 'https://github.com/Raidzin/FooBarTask').classes('text-white')
+
+    with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20).classes('opacity-40'):
+        ui.button(on_click=footer.toggle).props('fab icon=contact_support').props('color=dark').classes(' opacity-100')
+
+    with ui.row().classes('w-full mt-64 justify-center items-center').style('background-color: #00000000'):
+        with ui.column():
+            with ui.card().classes('backdrop-blur-sm q-pa-lg').style('background-color: #00000000; border-radius: 15px'):
+                async def update_text(value):
+                    try:
+                        digits = [
+                            int(element.strip())
+                            for element in value.value.strip().split(',')
+                        ]
+                        digits = post(
+                            'http://is_divisible_by_3535/is_divisible_by',
+                            json={'values': digits}
+                        ).json()
+                        text = ''
+                        for digit in digits:
+                            match digit:
+                                case 3:
+                                    text += ' foo'
+                                case 5:
+                                    text += ' bar'
+                                case 35:
+                                    text += ' foobar'
+                        result.set_text(text)
+                    except HTTPError as error:
+                        logging.exception(error)
+                        result.set_text('Проблемы с сетью...')
+                    except ValueError as error:
+                        logging.exception(error)
+                        result.set_text('Не корректный ввод...')
 
 
-def switch_tab(msg: Dict) -> None:
-    name = msg['args']
-    tabs.props(f'model-value={name}')
-    panels.props(f'model-value={name}')
+                ui.label(
+                    'Введите список целых чисел'
+                ).classes(
+                    'text-h4 text-wrap'
+                )
+                ui.textarea(
+                    placeholder='через запятую',
+                    on_change=update_text
+                ).classes(
+                    'w-full items-center text-center'
+                ).props(
+                    'autofocus autogrow input-class=text-white'
+                )
+
+                result = ui.label()
+
+ui.query('div.nicegui-content').classes('nicegui-content q-pa-none bg-black')
 
 
-with ui.header().classes(replace='row items-center') as header:
-    ui.button(on_click=lambda: left_drawer.toggle()).props('flat color=white icon=menu')
-    with ui.element('q-tabs').on('update:model-value', switch_tab) as tabs:
-        for name in tab_names:
-            ui.element('q-tab').props(f'name={name} label={name}')
-
-with ui.footer(value=False) as footer:
-    ui.label('Footer')
-
-with ui.left_drawer().classes('bg-blue-100') as left_drawer:
-    ui.label('Side menu')
-
-with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
-    ui.button(on_click=footer.toggle).props('fab icon=contact_support')
-
-
-# the page content consists of multiple tab panels
-with ui.element('q-tab-panels').props('model-value=A animated').classes('w-full') as panels:
-    for name in tab_names:
-        with ui.element('q-tab-panel').props(f'name={name}').classes('w-full'):
-            ui.label(f'Content of {name}')
-
-ui.run(host='0.0.0.0', port=80)
+ui.run(host='0.0.0.0', port=80, title='FooBar')
