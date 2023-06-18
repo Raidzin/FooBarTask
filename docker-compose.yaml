@@ -8,6 +8,11 @@ services:
       context: .
       dockerfile: DockerfileIsDivisibleBy3
     restart: always
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
 
 
   is_divisible_by_5:
@@ -15,6 +20,11 @@ services:
       context: .
       dockerfile: DockerfileIsDivisibleBy5
     restart: always
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
 
 
   is_divisible_by_35:
@@ -27,6 +37,11 @@ services:
         condition: service_started
       is_divisible_by_5:
         condition: service_started
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
 
 
   is_divisible_by_3535:
@@ -41,6 +56,11 @@ services:
         condition: service_started
       is_divisible_by_35:
         condition: service_started
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
 
 
   frontend:
@@ -59,3 +79,45 @@ services:
         condition: service_started
     ports:
       - "80:80"
+    labels:
+      logging: "promtail"
+      logging_jobname: "containerlogs"
+    networks:
+      - app
+
+  grafana:
+    image: grafana/grafana:9.3.6
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yaml
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    networks:
+      - app
+
+  loki:
+    image: grafana/loki:2.7.4
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - app
+
+  promtail:
+    image: grafana/promtail:2.7.4
+    volumes:
+      - ./grafana/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/docker-config.yaml
+    depends_on:
+      - loki
+    networks:
+      - app
+
+networks:
+  app:
+    name: app
