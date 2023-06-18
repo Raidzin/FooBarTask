@@ -1,5 +1,3 @@
-import logging
-
 from httpx import HTTPError, post
 from nicegui import ui
 
@@ -44,10 +42,10 @@ with ui.image('https://w.forfun.com/fetch/c6/c61a531f93b5cef71e45e8c01ab28435.jp
                                     text += ' foobar'
                         result.set_text(text)
                     except HTTPError as error:
-                        logging.exception(error)
+                        # logging.exception(error)
                         result.set_text('Проблемы с сетью...')
                     except ValueError as error:
-                        logging.exception(error)
+                        # logging.exception(error)
                         result.set_text('Не корректный ввод...')
 
 
@@ -70,4 +68,4 @@ with ui.image('https://w.forfun.com/fetch/c6/c61a531f93b5cef71e45e8c01ab28435.jp
 ui.query('div.nicegui-content').classes('nicegui-content q-pa-none bg-black')
 
 
-ui.run(host='0.0.0.0', port=80, title='FooBar')
+ui.run(host='0.0.0.0', port=80, title='FooBar', uvicorn_logging_level='critical')

@@ -1,5 +1,7 @@
 version: '3.8'
 
+name: foo-bar
+
 services:
   is_divisible_by_3:
     build:

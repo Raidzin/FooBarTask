@@ -9,6 +9,10 @@ RUN pip install poetry
 
 RUN poetry install
 
+COPY __init__.py .
+
+COPY structlogging.py .
+
 COPY div5.py .
 
-CMD poetry run python div5.py
+CMD poetry run gunicorn --bind 0.0.0.0:80 div5:A --log-level 'critical'

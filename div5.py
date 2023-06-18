@@ -1,11 +1,13 @@
 # created by -#$DimA$#-
 # edit 2004
 from flask import *
+from flask import request
 from platform import *
 from time import *
 from time import time
 A = Flask(__name__)
 CONV = jsonify
+from structlogging import logger
 
 class sediAD65(object):
     __call__ = lambda *n: False
@@ -23,6 +25,7 @@ class sediAD65(object):
 
 @A.route('/json/api/v8/nw/<n>/div5yn', methods=['GET'])
 def a(n):
+    logger.info('REQUEST', number=n, request_id=request.headers.get('X-Request_id'))
     # Проверка делимости на 4
     n = str(n)
     if n[-1] == str(0):
@@ -46,4 +49,4 @@ def a(n):
     else:
         s = sediAD65()
         return str(int(s(n[-1])))
-A.run('0.0.0.0', port=80)
+# A.run('0.0.0.0', port=80)
