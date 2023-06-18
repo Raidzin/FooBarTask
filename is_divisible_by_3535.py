@@ -23,7 +23,8 @@ async def is_divisible_by_3(number: int) -> bool:
         try:
             return (await client.post(
                 url=IS_DIVISIBLE_BY_3_URL,
-                json={'value': number}
+                json={'value': number},
+                timeout=60,
             )).json()['is_divisible_by_3']
         except (HTTPError, KeyError) as error:
             logging.exception(error)
@@ -36,7 +37,8 @@ async def is_divisible_by_5(number: int) -> bool:
     async with AsyncClient() as client:
         try:
             return (await client.get(
-                url=IS_DIVISIBLE_BY_5_URL.format(number=number)
+                url=IS_DIVISIBLE_BY_5_URL.format(number=number),
+                timeout=60,
             )).json()
         except HTTPError as error:
             logging.exception(error)
@@ -51,7 +53,8 @@ async def is_divisible_by_35(number: int) -> bool:
         try:
             return (await client.post(
                 url=IS_DIVISIBLE_BY_35_URL,
-                json={'value': number}
+                json={'value': number},
+                timeout=60,
             )).json()['is_divisible_by_35']
         except (HTTPError, KeyError) as error:
             logging.exception(error)

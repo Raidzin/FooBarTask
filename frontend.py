@@ -30,7 +30,8 @@ with ui.image('https://w.forfun.com/fetch/c6/c61a531f93b5cef71e45e8c01ab28435.jp
                         ]
                         digits = post(
                             'http://is_divisible_by_3535/is_divisible_by',
-                            json={'values': digits}
+                            json={'values': digits},
+                            timeout=60,
                         ).json()
                         text = ''
                         for digit in digits:
